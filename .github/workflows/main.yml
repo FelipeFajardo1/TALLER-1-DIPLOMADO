@@ -1,0 +1,46 @@
+name: CI/CD - Taller Diplomado
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # -----------------------------
+  # 🔹 INTEGRACIÓN CONTINUA (CI)
+  # -----------------------------
+  test:
+    name: Verificación de archivos requeridos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: Verificar existencia de archivos principales
+        run: |
+          echo "Verificando que existan home.html y styles.css..."
+          if [ ! -f "home.html" ]; then
+            echo "❌ Error: No se encontró home.html"
+            exit 1
+          fi
+          if [ ! -f "styles.css" ]; then
+            echo "❌ Error: No se encontró styles.css"
+            exit 1
+          fi
+          echo "✅ Archivos verificados correctamente."
+
+  # ---------------------------------------
+  # 🔹 DESPLIEGUE CONTINUO (CD) - Simulado
+  # ---------------------------------------
+  deploy:
+    name: Simulación de Despliegue
+    runs-on: ubuntu-latest
+    needs: test  # Solo se ejecuta si el job anterior pasa correctamente
+
+    steps:
+      - name: Preparar artefactos
+        run: |
+          echo "Compilando activos (simulación)..."
+          sleep 2
+          echo "✅ Artefactos listos para el despliegue en el entorno de Staging."
