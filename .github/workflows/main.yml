@@ -20,7 +20,7 @@ jobs:
 
       - name: ✅ Verificar que existan home.html y styles.css
         run: |
-          if [ ! -f "home.html" ]; then
+          if [ ! -f "index.html" ]; then
             echo "❌ No se encontró home.html"
             exit 1
           fi
