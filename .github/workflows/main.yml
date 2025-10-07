@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    name: 🔍 Verificación de archivos
+    name: Verificación de archivos
     runs-on: ubuntu-latest
 
     steps:
