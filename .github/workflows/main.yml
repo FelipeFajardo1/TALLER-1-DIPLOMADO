@@ -1,46 +1,57 @@
-name: CI/CD - Taller Diplomado
+name: CI/CD con despliegue a GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  # -----------------------------
-  # 🔹 INTEGRACIÓN CONTINUA (CI)
-  # -----------------------------
-  test:
-    name: Verificación de archivos requeridos
+  build:
+    name: 🔍 Verificación de archivos
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar el repositorio
-        uses: actions/checkout@v3
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v4
 
-      - name: Verificar existencia de archivos principales
+      - name: ✅ Verificar que existan home.html y styles.css
         run: |
-          echo "Verificando que existan home.html y styles.css..."
           if [ ! -f "home.html" ]; then
-            echo "❌ Error: No se encontró home.html"
+            echo "❌ No se encontró home.html"
             exit 1
           fi
           if [ ! -f "styles.css" ]; then
-            echo "❌ Error: No se encontró styles.css"
+            echo "❌ No se encontró styles.css"
             exit 1
           fi
           echo "✅ Archivos verificados correctamente."
 
-  # ---------------------------------------
-  # 🔹 DESPLIEGUE CONTINUO (CD) - Simulado
-  # ---------------------------------------
+      - name: 📦 Preparar artefactos para Pages
+        run: |
+          mkdir public
+          cp *.html public/
+          cp *.css public/
+          echo "Sitio preparado para despliegue."
+
+      - name: 📤 Subir artefactos
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
   deploy:
-    name: Simulación de Despliegue
+    name: 🌐 Desplegar en GitHub Pages
     runs-on: ubuntu-latest
-    needs: test  # Solo se ejecuta si el job anterior pasa correctamente
+    needs: build
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Preparar artefactos
-        run: |
-          echo "Compilando activos (simulación)..."
-          sleep 2
-          echo "✅ Artefactos listos para el despliegue en el entorno de Staging."
+      - name: 🚀 Desplegar
+        id: deployment
+        uses: actions/deploy-pages@v4
